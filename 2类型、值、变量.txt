@@ -1,0 +1,41 @@
+数据类型（type）：表示并操作的值的类型。
+原始类型：Number、String、Boolean、null、undefined
+对象类型：object、Function、类型：Array、Date、RegExp、Error
+面向对象的语言：不用定义函数操作不同类型的值，类型本身可定义方法使用值，进行对象隐式调用
+
+数字：IEEE 754的64为浮点数（2进制表示法，存在舍入误差），表示最大值：±1.7976*10^308,最小值：±5*10^-324
+整数范围：-2^53~2^53
+overflow、underflow、被零整除不报错
+
+String：UTF-16编码16位值组成不可变有序序列，length是16位值个数，无字符型
+多行用\隔开，输出用\n
+s.substring(start,stop)不接受负参数;
+s.slice(start，stop)
+s.split(separator，many);
+typeof(null) = object
+null是关键字，表示空值
+调用原始值的属性，自动创建临时对象，即包装对象
+//定义判断对象类型的函数
+function mytype(ele){
+	if (ele === null){
+		return null;
+	}
+	else if(typeof ele !== "object"){
+		return typeof ele;
+	}
+	else if(ele instanceof Function){
+		return 'function';
+	}
+	else {
+		return typeof ele;
+	}
+}
+
+Number.toString(进制);
+Number.toFixed()、toExponential()、toPrecision();
+整数字面量存储有符号整数，位运算符创建无符号整数
+
+对象具有toString（）方法，valueOf（）；
+Date对象优先用toString（）；
+
+位运算符~  数→32位数字→反码→浮点数
