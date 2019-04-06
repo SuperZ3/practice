@@ -1,0 +1,63 @@
+属性特性：可写性、可枚举性、可配置性，对象特性：原型、类、扩展标记
+Object.getOwnPropertyDescriptor();
+Object.defineProperty(o,proterty,{descript})
+对象的可扩展性Object.isExtensible();
+圆形继承创建新对象
+function inherit(p){
+    if (p == null) throw TypeError();
+    if (Object.create)
+        return Object.create(p);
+    var t = typeof p;
+    if (t !== "object" && t !== "function") throw TypeError();
+    function f(){};
+    f.prototype = p;
+    return new f();
+}
+属性赋值不修改原型链
+检测属性：in运算符、hasOwnPreperty（）、propertyIsEnumerable（）、！==；
+/*可枚举属性继承，不处理getter、setter*/
+function extend(o,p){
+    for(prop in p){
+        o[prop] = p[prop];
+    }
+    return o;
+}
+function merge(o,p){
+    for(prop in p){
+        if(o.hasOwnProperty[prop]) continue;
+        o[prop] = p[prop];
+    }
+    return o;
+}
+function restrict(o,p){
+    for(prop in o){
+        if(!(prop in p)) delete o[prop]
+    }
+    return o;
+}
+function union(o,p){return extend(extend({},o),p);}
+function keys(o){
+    if(typeof o !== "object") throw TypeError();
+    var result = [];
+    for (var prop in o){
+        if(o.hasOwnProperty(prop))
+            result.push(prop);
+    }
+    return result;
+}
+Objext.keys()枚举属性名称；可枚举自由属性名称
+Object.getOwnPropertyNames()所有自有属性名称；
+数据属性特性：value、writable、enumerable、configurable
+属性描述符对象：Object.getOwnPropertyDescriptor(自有属性)
+设置属性特性：Object.defineProperty()不能修改继承属性/2个以上修改用复数
+规则：不可扩展可以编辑已有自有属性不能新增属性、不可配置不能修改可配置性和可枚举型、存取器不可配置不能修改get和set、数据属性不可配置只可以将true改为false、不可配置且不可写不能修改、可配置不可写可以修改
+对象三个属性：ptototype、class、extensible
+function classof(o){
+    if(o=== null) return "Null";
+    if(o=== undefined) return "undefined";
+    return Object.prototype.toString.call(o).slice(8,-1);
+}
+Object.isExtensible();Object.preventExtensions();只影响对象本身可扩展性
+Object.seal()不可扩展不可配置;Object.isSealed();Object.freeze();Object.isFrozen();
+序列化对象：对象与字符串互转化JSON.stringify（）、JSON.parse();不能序列化函数、RegExp、Error、undefined；只序列化对象可枚举的自由属性；
+Object.prototype中的方法
