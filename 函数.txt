@@ -1,0 +1,111 @@
+var a = function b(n){if(n<0)return 1;else return n*b(n-1)};
+a(3) = 6;
+b()//语法错误
+a.name = 'b';
+
+arguments.callee//指代该函数caller指代调用函数 严格模式不可用
+
+扩展extend()函数：
+var extend = (function(){
+	for (var p in {toString:null}){
+		return function extend(o){
+			for (var i = 0;i<arguments.length;i++){
+				var source = arugments[i];
+				for (var pop in source) o[pop] = source[pop];
+			}
+			return o;
+		};
+	}
+	return function patched_extend(o){
+		for (var i = 1;i < arguments.length;i++){
+			var source = arguments[i];
+			for (var pop in source) o[pop] = surce[o];
+			for (var j = 0;j<protoprops.length;i++){
+				pop = protoptops[j];
+				if (source.hasOwnProperty(pop)) o[pop] = source[pop];
+			}
+		}
+		return o;
+	};
+	var protoprops = ["toString","valueOf","constructor","hasOwnPropety","isPrototypeOf","propertyIsEnumerable","toLocalString"];
+}());
+
+Monkey-patching:
+function trace(o,m){
+	var original = o[m];
+	o[m] = function(){
+		console.log(new Date(),"enter",m);
+		var result = original.apply(this,arguments);
+		console.log(new Date(),"exit",m);
+		return result;
+	};
+}
+
+自定义map、reduce：
+var map = Array.prototype.map
+	?function(a,f){return a.map(f);}
+	:function(a,f){
+		var result = [];
+		for (var i = 0,len = a.length;i<len;i++){
+			if(i in a) result[i] = f.call(null,a[i],i,a);
+		}
+		return result;
+	}
+var reduce = Array.prototype.reduce
+	?function(a,f,init){
+		if(arguments.length > 2)
+			return a.reduce(f,init);
+		else return a.reduce(f);
+	}
+	:fucntion(a,f,init){
+		var i = 0,len = a.length,acc;
+		if(arguments.length > 2) acc = init;
+		else{
+			if(len == 0) throw TypeError();
+			while(i < len){
+				if(i in a){
+					acc = a[i++];
+					break;
+				}
+				else i++;
+			}
+			if (i == len) throw TypeError();
+		}
+		while (i < len){
+			if (i in a){
+				acc = f.call(undefined,acc,a[i],i,a);
+			i++;
+			}
+		return acc;
+		};
+	}
+
+this是关键字,不同于变量作用域
+
+
+JS运行：语法解析、预编译、解释执行
+预编译：
+1、创建AO对象
+2、找形参/变量声明 = undefined
+3、实参值赋给形参
+4、找函数声明赋值函数体
+
+作用域链[[scope]]
+
+闭包：
+嵌套函数可访问外部函数作用域定义的变量
+
+立即执行函数：
+(表达式)();(表达式());失去函数索引
+
+构造函数：
+function Test(){
+	//new时，创建新对象，this = {arguments，...}
+	return this
+}
+
+
+
+
+
+
