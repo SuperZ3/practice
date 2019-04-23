@@ -1,0 +1,204 @@
+Java式类继承：定义类方式1、定义构造函数，初始化新对象实例属性2、给Prototype对象定义实例方法3、构造函数定义类对象、类方法
+function defineClass(constructor,methods,statics){
+    if (methods) extends(constructor.prototype,methods);
+    if (statics) extends(constructor,statics);
+    return constructor;
+}
+检测对象类的技术：
+o instanceof constructor、p isPrototypeOf (o)、constructor名字
+判断值类型的type函数(typeof处理值和函数，对象要么返回class属性的值要么返回构造函数名字：
+function type(o){
+    vat t,c,n;
+    //处理null和NAN
+    if (o === null) return "null";
+    if (o !== o) return "nan";
+    //识别原始类型和函数
+    if ((t = typeof o) !== "object") return t;
+    if ((c = classof(o)) !== "object") return c;
+    if (o.constructor && typeof o.constructor === "function" && (n = o.constructor.getName())) return n;
+
+    return "object";
+}
+
+function classof(o) {
+    return Object.prototype.toString.call(o).slice(8,-1);
+};
+
+Function.prototype.getName = function(){
+    if ("name" in this) return this.name;
+    return this.name = this.toString().match(/function\s*([^(]*)\(/)[1];
+};
+
+鸭式辨型
+function quacks(o/*,*/){
+    for (var i = 1; i < arguments.length;i++){
+        var arg = arguments[i];
+        switch (typeof arg) [
+            case 'string':
+                if (typeof o[arg] !== "function") return false;
+                continue;
+            case 'function':
+                arg = arg.prototype;
+            case 'object':
+                for (var m in arg) {
+                    if (typeof arg[m] !== "function") continue;
+                    if (typeof o[m] !== "function") return false
+                }
+        ]
+    }
+    return true;
+}
+
+集合类
+function Set(){
+    this.values = {};
+    this.n = 0;
+    this.add.apply(this,arguments);
+}
+Set.prototype.add = function (){
+    for (var i = 0;i < arguments.length;i++){
+        var val = arguments[i];
+        var str = Set._v2s(val);
+        if (!this.values.hasOwnProperty(str)){
+            this.values[str] = val;
+            this.n++;
+        }
+    }
+    return this;
+};
+Set.prototype.remove = function(){
+    for (var i = 0;i < arguments.length;i++){
+        var str = Set._v2s(arguments[i]);
+        if (this.values.hasOwnProperty(str)){
+            delete this.values[str];
+            this.n--;
+        }
+    }
+    return this;
+};
+
+Set.prototype.contains = function(value){
+    return this.values.hasOwnProperty(Set._v2s(value));
+};
+
+Set.prototype.size = function (){
+    return this.n;
+};
+
+Set.prototype.foreach = function (f,context){
+    for (var s in this.values)
+        if (this.values.hasOwnProperty(s))
+        f.call(context,this.values[s]);
+};
+
+Set._v2s = function (val) {
+    switch (val){
+        case undefined: return 'u';
+        case null: return 'n';
+        case true: return 't';
+        case false: return 'f';
+        default: switch (typeof val) {
+            case 'number': return '#' + val;
+            case 'string': return '"' + val;
+                default: return '@' + objectId(val);
+        }
+    }
+    function objectId(o){
+        var prop = "|**objectId**|";
+        if (!o.hasOwnProperty(prop))
+            o[prop] = Set._v2s.next++;
+        return o[prop];
+    }
+};
+Set._v2s.next = 100;
+
+function enumeration(namesToValues){
+    var enumeration = function (){ throw "Can't Instantiate enumeration";};
+
+    var ptoto = enumeration.prototype = {
+        constructor:enumeration,
+        toString: function (){ return this.name;},
+        valueOf: function (){ return this.value;},
+        toJSON: function (){ return this.name;}        }
+    };
+    enumeration.values = [];
+    for (name in nameToValues){
+        var e = inherit(proto);
+        e.nan = name;
+        e.value = namesToValues[name];
+        enumeration[name] = e;
+        enumeration.values.push(e);
+    }
+    enumeration.foreach = function (f,c){
+        for (var i = 0;i < this.values.length;i++) f.call(c,this.values[i]);
+    };
+    return enumeration;
+}
+
+标准转化方法：toString()、toLocalString()、valueOf()、toJSON()
+比较方法：比较对象引用，不是比较属性名和属性值，而是直接比较单独对象是否相等，或者比较顺序
+方法借用：将一个类方法赋值另一个类的原型
+私有状态：通过闭包封装变量
+构造函数的重载和工厂方法：工厂方法————类的方法返回类的实例
+组合优于继承：包装集合对象，过滤器
+实现多态的方法：从实现中抽离出接口
+
+属性描述夫符:
+(function name(){
+	function prop(){
+		var names;
+		if(arguments.length == 0)
+			names = Object.getOwnPropertyNames(this);
+		else if (arguments.length == 1 && Array.isArray(arguments[0]))
+			names = arguments[0];
+		else
+			names = Array.prototype.slice.call(arguments,0);
+		return new Prop(this,names);
+	}
+	Object.defineProperty(Object.prototype,"prop",{
+		value:prop,
+		enumerable:false,
+		writable:true,
+		configurable:true
+	});
+	function Prop(o,names){
+		this.o = o;
+		this.names = names;
+	}
+	Prop.prototype.hide = function(){
+		/*var o = this.o,hidden = {enumerable:false};
+		this.names.foreach(function(n){
+							if (o.hasOwnProperty(n))
+								Object.defineProperty(o,n,hidden);});
+			return this*/
+		console.log("Happy");
+		}
+	Prop.prototype.freeze = function(){
+		var o = this.o,frozen = {writable:false,configurable:false};
+		this.names.forEach(function(n){
+							if (o.hasOwnProperty(n))
+								Object.defineProperty(o,n,frozen);
+		return this;
+		};
+	Prop.prototype.descriptors = function(){
+		var o = this.o,desc = {};
+		this.names.forEach(function(n){
+							if (!o.hasOwnProperty(n)) return;
+							desc[n] = Object.getOwnPropertyDescriptor(o,n);});
+		return desc}
+	Prop.prototype.prop().hide();
+}());
+
+
+
+
+
+
+
+
+
+模块化：
+命名空间对象
+导出API：1、导出构造函数，2、返回命名空间对象，3、将模块函数作为构造函数 ，通过new将实例赋值给this，4、已有全局对象，将模块函数设置为对象属性
+
+var a = {b:1,c:2};var d = {e:ee,f:ff};d=a;console.log(d);console.log(d.e);
