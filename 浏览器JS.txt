@@ -1,0 +1,41 @@
+脚本类型：默认JS，非标准类型用type指定；
+事件处理程序：Web浏览器先注册时间处理程序，在之后调用作为事件的响应
+javascript:URL应用，
+<a href='javascript:
+    var e = "",r = "";
+    do {
+        e = prompt ("expression:"+e+"\n"+r+"\n",e);
+        try {r="result:" + eval(e);}
+        catch(ex) {r = ex;}
+    }while(e);
+    void 0;
+'>javascript evaluator</a>
+JS执行时间线:
+1、创建Document对象，添加Element、Text对象，document.readyState属性“Loading”；
+2.1、添加<script>元素，同步执行内外部脚本，暂停文档解析；
+2.2、遇到async属性<script>元素，下载脚本继续解析文档，脚本在下载完成后尽快执行，不能访问文档其它内容；
+3、文档解析完成，document.readyState属性“interactive”
+2.3、遇到defer属性<script>元素，按照顺序执行，可访问整个文档树
+4、浏览器触发Docement对象的DOMContentLoaded事件，标志异步驱动阶段开始
+5、等待其他元素载入及异步脚本执行，document.readyState属性“complete”，Web触发window.load事件。
+【功能测试技术】
+【渲染模式】依赖HTML的DOCTYPE声明，document.compatMode
+【同源策略】脚本职能读取和所属文档来源相同的窗口和文档属性，包括协议、主机及端口
+脚本本身来源和同源策略不相关，关联的是嵌入的文档的来源
+【不严格的同源策略】
+1、document.domain存放主机名
+2、Cross-Origin Resource Sharing
+3、跨文档消息：window。postMessage()；
+【浏览器定位导航】window.location === document.location表示当前文档的URL
+location。assig()/replace()/reload()
+【浏览历史】window.history.back()/forward()/go()
+【浏览器】window.navigator.appName/appVersion/userAgent/platform
+【Screen】window.screen.width/height/availWidth/availHeight/colorDepth
+【错误处理】window.onerror是事件处理程序，通过3个参数而非对象调用，（”错误消息“，”URL“，”行数“）
+【作为Window对象属性的文档元素】
+【多窗口与窗体】
+window.open("url",name,列表)
+【窗体间关系】窗体通过Parent引用包含它的窗口或窗体
+<iframe>的contentWindow引用其Window对象,其frameElement指向窗体
+window.frames,通过Window对象属性引用的iframe指窗体中的window对象，非元素对象，可由window[i]引用
+每个窗口拥有独立的构造函数和原型的副本
