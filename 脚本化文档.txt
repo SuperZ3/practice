@@ -1,0 +1,73 @@
+【选取文档元素】document.getElementById()/getElementsByName()只针对HTML文档，iframe中指代window对象/getElementsByTagName(),定义了快捷属性访问节点images，forms，links返回HTMLCollection对象，document.documentElement指文档根元素,以上均为类数组对象，是实时的
+document.getElementsByClassName()怪异模式不区分大小写，document.querySelectorAll()/querySelector("选择器字符串"f)不是实时的
+【文档结构和遍历】作为节点树的文档，作为元素树的文档Element的对象树
+【属性】表示HTML文档元素的HTMLElement对象定义了读/写属性，它们映射了元素的标准HTML属性，特定的Element子类型定义了特定的属性（注意驼峰命名法），该API用来获取和设置属性值
+Element类的getAttribute()/setAttribute(),属性值被看做字符串，参数不区分大小写，hasAttribute()/setAttribute();
+HTML5定义了“data-”前缀的数据集属性，Element.dataset指代此属性
+Node.attributes只读的类数组对象，实时的
+【元素内容】Element.innerHTML返回元素内容，设置该属性调用的Web浏览器解析器，outerHTML属性
+Node.textContent/Element.innerText表示元素的纯文本形式的内容，内联<script>元素用text属性获取文本
+Text和CDATASection是CharacterData的子类型，定义了data属性，值和nodeValue想同
+【创建插入和删除节点】Document定义创建Element和Text对象方法，Node定义插入、删除和替换的方法
+document.createElement(),cloneNode(),importNode()
+node.appendChild()/inserBefore(待插入，已存在)在父节点调用
+function insertAt(parent,child,n){
+    if(n<0||n>parent.childNodes.length)throw new Error("");
+    else if(n == parent.childNodes.length) parent.appendChild(child);
+    else parent.insertBefore(child,parent.childNodes[n]);
+}插入已存在文档，先自动删除，并在新位置插入
+//表格行排序
+function sortrows(table,n,comparator){
+    var tbody = table.tBodies[0];
+    var rows = tbody.getElementByTagName("tr");
+    rows = Array.prototype.slice.call(rows,0);
+    rows.sort(function(row1,row2){
+        var cell1 = row1,getElementByTagName("td")[n];
+        var cell2 = row2.getElementByTagName("td")[n];
+        var val1 = cell1.textContent || cell1.innerText;
+        var vall2 = cell2.textContent || cell2.innerText;
+        if(comparator) return comparator(val1,val2);
+        if(val1 < val2) return -1;
+        else if (val1 > val2) return 1;
+        else return 0;
+    });
+    for (var i = 0;i < rows.length;i++) tbody.appendChild(rows[i]);
+    function makeSortable(table){
+        var headers = table.getElementByTagName("th");
+        for (var i = 0;i< headers.length;i++){
+            (function(n){
+                headers[i].onclick = function{sortrows(table,n);};
+            }(i))
+        }
+    }
+}
+n.parentNode.removeChild(n),replaceChild(new,old)
+document.createDocumentFragment();
+【文档和元素的几何形状滚动】文档坐标和视口坐标window.pageXOffset/pageYOffset,scrollLeft/scrollTop标准模式作为documentElement属性，怪异模式下作为body属性
+function getScrollOffsets(w){
+    w = w || window
+    //IE8以后版本，所有浏览器
+    if(w.pageXOffset != null) return{x:w.pageXOffset,y:w.pageYOffset};
+    //标准IE
+    var d = w.document;
+    if(document.compatMode == "CSS1Compat")
+        return {x:d.documentElement.scrollLeft,y:d.documentElement.scrollTop};
+    //怪异
+    return {x:d.body.scrollLeft,y:d.body.scrollTop};
+}
+function getViewportSize(w){
+    w = w||window;
+    //IE8以后版本，所有浏览器
+    if(w.innerWidth != null) return{w:w.innerWidth,h:w.innerHeight};
+    //标准模式IE
+    var d = w.document;
+    if(document.compatMode == "CSS1Compat")
+        return {w:d.documentElement.clientWidth,h:d.documentElement.clienHeight};
+}
+element.getBoundingClientRect(),返回有left、right、top和bottom属性的对象，元素在视口坐标中位置，包含边框和内边距【查询元素几何尺寸】静态快照
+【滚动】window.scrollTo()/scroll(文档坐标x、y)/scrollBy()
+HTML元素只读属性offsetWidth/offsetHeight/offsetLeft/offsetTop,是文档坐标，已定位元素代表相对父元素的坐标，offsetParent，clientWidth/height/Left/Top不包含边框滚动条，scrollWidth/Height/Left/Top
+【HTML表单】 1、选取表单和表单元素：传统方法选取，document.forms返回类数组
+2、表单元素属性：type，name，value，form
+3、事件处理：默认时间onsubmit（），单击元素触发
+4、查询文本：window.getSlection()返回Selection对象包括range对象
