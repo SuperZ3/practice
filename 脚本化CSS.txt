@@ -1,0 +1,31 @@
+样式表:<link rel = "stylesheet" href = ".css" type="text/css">
+计算样式：文档样式表，style属性，组合计算出实际用的样式值
+【定位元素】static、absolute、fixed、relative（相对常规文档流定位）
+z-index只对兄弟元素应用堆叠效果
+width、height标准盒模型，不包含边框和内边距
+visibility、display
+color指定文本的颜色
+opacity：0~1、filter：alpha（opacity=%）；
+overflow：visible、hidden、scroll、auto；clip：rect（top right bottom left）
+style属性的值是CSSStyleDeclaration对象，驼峰命名法，值是字符串
+setAttribute（“style”，s），e.style.cssText= s
+window.getComputedStyle（element，null），值是绝对值，不计算复合属性，cssText未定义，只读的
+IE用currentStyle替代，值是CSSStyeDeclaration
+【脚本样式表】元素对象<style><link>,CSSStyleSheet,document.styleSheets,disabled属性,cssRules属性，rules属性，selectorText属性，cssText属性，insertRule属性，deleteRule属性，addRule，removeRule属性
+var ss = document.styleSheets[0];
+var rules = ss.cssRules?ss.cssRules:ss.rules;
+for(var i = 0;i < rules.length;i++){
+    var rule = rules[i];
+    if(!rule.selectorText) continue;
+    var selector = rule.selectorText;
+    var  ruleText = rule.style.cssText;
+    if (selector == "h1"){
+        if (ss.insertRule) ss.insertRule("h2{"+ruleText+"}",rules.length);
+        else if (ss.addRule) ss.addRule("h2",ruleText,rules.length);
+    }
+    if(rule.style.textDecoration){
+        if(ss.deleteRule) ss.deleteRule(i);
+        else if (ss.removeRule) ss.removeRule(i);
+        i--;
+    }
+}
