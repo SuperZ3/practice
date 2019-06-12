@@ -1,0 +1,152 @@
+【事件分类】
+1、传统事件类型（键盘、鼠标、window、表单），DOM事件
+【事件处理程序】
+1、对象属性window.onload
+2、HTML标签属性，浏览器属性放到<body>标签上，在window对象上注册
+function(event){
+    with(document){
+        with(this.form || {}){
+            with(this){
+                /*编码*/
+            }
+        }
+    }
+}
+3、
+【事件处理程序调用】
+调用事件处理程序，使用事件对象作为参数
+事件处理程序属于词法作用域，HTML属性事件处理程序运行在修改后的作用域中，像本地变量弋阳使用目标对象、容器对象、document对象的属性
+function addEvent(target,type,handler){
+    if(target.addEventLinster)
+        target.addEventLinster(type,handler,false);
+    else 
+        type.attachEvent("on"+type,function(event){
+            return handler.call(target,event);
+        });
+}
+function cancelHandler(event){
+    var e = event || window.event;
+    if(e.preventDefault) e.pereventDefault();
+    if(e.returnValue) e.returnValue = false;
+    return false;
+}
+event.stopPropagation()//event.cancelBubble = true;
+【文档加载事件】
+var whenReady = (function(){
+    var funcs = [];
+    var ready = false;
+    function handler(e){
+        if (ready) return;
+        if (e.type === "readystatechange" && document.readystatechange !== "complete")return;
+        for (var i = 0;i < funcs.length;i++)
+            funcs[i].call(document);
+        ready = true;
+        funcs = null;
+    }
+    if(document.addEventLinster){
+        document.addEventLinster("DOMContentLoaded",handler,false);
+        document.addEventLinster("readystatechange",handler,false);
+        window.addEventLinster("load",handler,false);
+    }
+    else if (document.attachEvent){
+        document.attachEvent("onreadystatechange",handler);
+        window.attachEvent("onload",handler);
+    }
+    return function whenReady(f)(
+        if (ready) f.call(document);
+        else funcs.push(f);
+    )
+}())
+function drag(elementToDrag,event){
+    var scroll = getScrollOffsets();//获得滚动条位置
+    var startX = event.clinetX+scroll.x;
+    var startY = event.clientY + scroll.y;//鼠标文档坐标
+    var origX = elementToDrag.offsetLeft;
+    var origY = elementToDrag.offsetTop;//元素文档坐标
+    var deltaX = startX - origX;
+    var deltaY = startY - origY;//元素与鼠标距离
+
+    if(document.addEventLinster){
+        document.addEventLinster("mousemove",moveHandler,true);
+        document.addEventLinster("mouseup",upHandler,true);
+    }
+    else if(document.attachEvent){
+        elementToDrag.setCapture();
+        elementToDrag.attachEvent("onmousemove",moveHandler);
+        elementToDrag.attachEvent("onmouseup",upHandler);
+        elementToDrag.attachEvent("onlosecapture",upHandler);
+    }
+
+    if(event.stopPropagation) event.stopPropagation();
+    else event.cancelBubble = true;
+    if(event.preventDefault) event.preventDefault();
+    else event.returnValue = false;
+
+    function moveHandler(e){
+        if(!e) e = window.event;
+        var scroll = getScrollOffsets();
+        elementToDrag.style.left = (e.clinetX + scroll.x - deltaX) + "px";
+        elementToDrag.style.top = (e.clientY + scroll.y - deltaY) + "px";
+        if(e.stopPropagation) e.stopPropagation();
+        else e.cancelBubble = true;
+    }
+    function upHandler(e){
+        if(!e) e= window.event;
+        if(document.removeEventLinstener){
+            document.removeEventLinstener("moseup",upHandler,true);
+            document.removeEventLinstener("mousemove",moveHandler,true);
+        }
+        else if(document.detachEvent){
+            elementToDrag.detachEvent("onlosecapture",upHandler);
+            elementToDrag.detachEvent("onmouseup",upHandler);
+            elementToDrag.detachEvent("onmouseup",moveHandler);
+            elementToDrag.releaseCapture();
+        }
+        if(e.stopPropagation) e.stopPropagation();
+        else e.cancelBubble = true;
+    }
+}
+【拖放】
+whenReady(function(
+    var clock = document.getElementById("clock");
+    var icon = new Image();
+    icon.src = "clock-icon.png";
+
+    function displayTime(){
+        var now = new Date();
+        var hrs = now.getHours(),mins = now.getMinutes();
+        if(mins<10) mins = "0" + mins;
+        clock.innerHTML = hrs + ":" + mins;
+        setTimeout(displayTime,60000);
+    }
+displayTime();
+clock.draggable = true;
+clock.ondragstart = function(event){
+    var event = event || window.event;
+    var dt = event.dataTransfer;
+    dt.setData("Text",Date() + "\n");
+    if(dt.setDragImage) dt.setDragImage(icon,0,0);
+    };
+){}())
+whenReady(function(
+    var lists = document.getElementByTagName("ul");
+    var regesp = /\bdnd\b/;
+    for (var i = 0;i < lists.length;i++){
+        if(regexp.test(lists[i].className)) dnd(lists[i]);
+    function dnd(list) {
+        var ogiginal_class = list.className;
+        var entered = 0;
+
+        list.ondragenter = function(e){
+            e = e || window.event;
+            var from = e.relatedTarget;
+
+            entered++;
+            if((from && !ischild(from,list))||entered == 1){
+                 var dt = e.dataTransfer;
+                 var types = dt.types;
+            }
+        }
+    }
+    }
+){}())
