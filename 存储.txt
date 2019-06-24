@@ -1,0 +1,140 @@
+window.localStorage/sessionStorage可存储结构化数据、原始类型、内置类型，存储其它类型自动转换成字符串
+存储有效期→localStorage永久存储，sessionStorage同顶层窗口一样
+作用域→localStorage限定文档源级别
+API：localStorage.setItem(name,value)/getItem()/removeItem()/clear()/key()/length;
+数据发生改变出发存储事件，在窗口对象上不触发，storage事件对象属性key，newValue,oldValue,url,storageArea
+cookie有效期max-age指定,与浏览器相关
+cookie作用域受同源策略限制，通过path/domain属性可以访问同一路径/同一域名的文档
+cookie默认是不安全的，secure属性为布尔值，设置为安全的，就只能同通过HTTPS或其它安全协议连接的时候传递
+基于cookie的存储API
+function cookieStorage(maxage,path){
+	var cookie = (function(){
+		var cookie = {};
+		var all = document.cookie;
+		if(all === "") return cookie;
+		var list = all.split(";");
+		for (var i = 0;i<list.length;i++){
+			var cookie = list[i];
+			var p = cookie.indexof("=");
+			var name = cookie.substring(0,p);
+			var value = cookie.substring(p+1);
+			value = decodeURIComponent(value);
+			cookie[name] = value;
+		}
+		return cookie
+	}());
+
+	var keys = [];
+	for (var key in cookie) keys.push(key);
+
+	this.length = keys.length;
+
+	this.key = function(n) {
+		if (n<0 || n>=keys.length) return null;
+		return keys[n];
+	};
+
+	this.getItem = function(name){
+		return cookie[name] || null;
+	};
+
+	this.setItem = function(key,value){
+		if(!(key in cookie)) {
+			keys.push(key);
+			this.length++;
+		}
+		cookie[key] = value;
+
+		var cookie = key + "=" + encodeURIComponent(value);
+
+		if (maxage) cookie += ";max-age="+ maxage;
+		if (path) cookie += ";path=" + path;
+
+		document.cookie = cookie;
+	}
+
+	this.removeItem(key){
+		if(!(key in cookie)) return;
+
+		delete cookie[key];
+
+		for(var i = 0;i<key.length;i++){
+			if (keys[i] === key){
+				keys.splice(i,1);
+				break;
+			}
+		}
+		this.length--;
+		document.cookie = key + "=;max-age=0";
+	};
+}
+Web应用程序缓存
+html标签设置manifest='清单URL',清单首行以"CACHE MANIFEST"开始,其余是URL，清单以.appcache扩展名，Web服务器认识清单通过"text/cache-manifest"类型
+CACHE MANIFEST
+
+CACHE:
+myapp.html
+myapp.css
+myapp.js
+
+FALLBACK:
+videos/offline_help.html
+
+NETWORK:
+cgi/
+
+应用程序缓存事件
+applicationCache.onupdateready = function(){
+	var reload = confirm("update application");
+	if (reload) location.reload();
+}
+window.applicationCache.onchecking = function(){
+	console.log("checking for a new version");
+	return false;
+}
+清单文件没动，已经缓存应用程序
+window.applicationCache.onnoupdate = function(){
+	console.log("this version is up-to-date.");
+	return false;
+};
+如果还未缓存应用程序，或者清单文件有改动，浏览器下载并缓存清单中所有资源
+触发“downloading”事件，同时下载过程开始
+window.applicationCache.ondownloading = function(){
+	console.log("downloading new version");
+	window.progresscount = 0;
+	return false;
+}
+下载过程中间断触发“progress”事件，每个文件下载完毕的时候
+window.applicationCache.onprogress = function(e){
+	事件对象是progress事件，像XHR2一样使用
+	var progress = "";
+	if(e && e.lengthComputable)
+		progress = ""+Math.round(100*e.loaded/e.total)
+	else
+		progress = "(" + ++progresscount + ")";
+	return false;
+}
+下载完成首次下载到缓存中，触发cached事件
+window.applicationCache.oncached = function(){
+	return false;
+}
+离线状态，检查清单列表失败，触发error事件
+window.applicationCache.onerror = function({
+	return false;
+})
+缓存应用程序引用不存在清单文件，触发obsolete事件，同时将应用从缓存中移除，后续通过网络资源加载
+window.applicationCache.onobsolete = functiong()
+{
+	return false
+}
+
+
+
+
+
+
+
+
+
+
+
