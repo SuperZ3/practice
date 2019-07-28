@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<title></title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		div{
+			float: left;
+			border: 1px solid red;
+			width:170px;
+			margin:10px;
+		}
+		div img{
+			position: relative;
+			left: 10px;
+		}
+		div p{
+			text-align: center;
+		}
+		ul {
+			clear:both;
+			width:515px;
+			height: 200px;
+			border:1px solid blue;
+			margin-left:10px;
+		}
+	</style>
+<body>
+	<div><img src=".\1.jpg" width="150px" height="200px" draggable="true"><p>first</p><p name="price">170</p></div>
+	<div><img src=".\1.jpg" width="150px" height="200px" draggable="true"><p>first</p><p name="price">190</p></div>
+	<div><img src=".\1.jpg" width="150px" height="200px" draggable="true"><p>first</p><p name="price">300</p></div>
+	<ul id="ul">
+	</ul>
+	<script type="text/javascript">
+		var $ = function(ele){return document.getElementById(ele);};
+		var img = document.getElementsByTagName("img");
+		for(var i=0;i<img.length;i++){
+			// img[i].ondragover = function(e){
+			// 	e.preventDefault();
+			// }
+		img[i].ondragstart = function(e){
+				var txt = this.nextSibling.innerText;
+				e.dataTransfer.setData("text",txt);
+			}
+		}
+		$("ul").ondragover = function(e){
+			e.preventDefault();
+		}
+		$("ul").ondrop = function(e){
+		 //    var dt = e.dataTransfer;
+			// e.preventDefault();
+			// var fs = dt.files;
+			// var fr = new FileReader();
+			// fr.readAsDataURL(fs[0]);
+			// fr.onload = function(){
+			// 	var nimg = document.createElement("img");
+			// 	var nli = document.createElement("li");
+			// 	nimg.src = fr.result;
+			// 	document.getElementById("ul").appendChild(nli);
+			// 	nli.appendChild(nimg);
+			// }
+			//if(dt.types == "text/plain,text/uri-list,text/html") {
+				var li = document.createElement("li");
+				var ico = document.createElement("img");
+				var p = document.createElement("p");
+				this.appendChild(li);
+				li.appendChild(ico);
+				li.appendChild(p);
+				ico.src = ".\\1.jpg";
+				ico.style.width = "30px";
+				ico.style.height = "40px";
+				p.innerText = e.dataTransfer.getData("text");
+				p.style.display = "inline-block";
+				
+			//}
+			// else{
+			// 	alert("Can not read");
+			// }
+		}
+	</script>
+</body>
+</html>
