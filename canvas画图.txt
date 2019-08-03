@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+	<title>canvas</title>
+	<style type="text/css">
+		body {
+			background: black;
+			color: white;
+			font-size: 30px;
+		}
+		canvas {
+			/*margin-left: 50px;*/
+			background-color: white;
+			/*float: left;*/
+		}
+		ul {
+			float: left;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+		window.onload = function(){
+		var oc = document.getElementById("c1");
+		var occ = oc.getContext('2d');
+		var li = document.getElementsByTagName("li");
+		for(var i = 0;i<li.length;i++){
+			li[i].onclick = function(){
+			var str = this.innerHTML;
+			//var w = 200;
+			var h = 100;
+			occ.clearRect(0,0,oc.width,oc.height);
+			// occ.createLinearGradient(100,100,300,300);
+			// line.addColorStop(0,"red");
+			// line.addColorStop(1,"purple");
+			occ.fillStyle = "red";
+			//occ.fillRect(100,100,200,200);
+			occ.font = h + "px impact";
+			occ.textBaseline = "top";
+			var w = occ.measureText(str).width;
+			occ.fillText(str,(oc.width - w)/2,(oc.height - h)/2);
+
+			//粒子效果
+			var oimg = occ.getImageData((oc.width - w)/2,(oc.height - h)/2,w,h);
+			occ.clearRect(0,0,oc.width,oc.height);
+			var na = ran(w*h,w*h/10);
+			var nimg = occ.createImageData(w,h);
+			for (var i = 0; i < na.length; i++) {
+				nimg.data[4*na[i]] = oimg.data[4*na[i]];
+				nimg.data[4*na[i]+1] = oimg.data[4*na[i]+1];
+				nimg.data[4*na[i]+2] = oimg.data[4*na[i]+2];
+				nimg.data[4*na[i]+3] = oimg.data[4*na[i]+3];
+			}
+			occ.putImageData(nimg,(oc.width - w)/2,(oc.height - h)/2);
+			};
+		}
+
+		function ran(to,ch){
+				var a = [];
+				var b = [];
+				for(var j =0;j<to;j++){
+					a.push(j);
+				}
+				for(var j = 0;j<ch;j++){
+					b.push(a.splice(Math.floor(Math.random()*a.length),1));
+				}
+				return b;
+			}
+		}
+	</script>
+	<canvas id="c1" width="400" height="400"></canvas>
+	<ul>
+		<li>这</li>
+		<li>就</li>
+		<li>是</li>
+		<li>街</li>
+		<li>舞</li>
+	</ul>
+</body>
+</html>
