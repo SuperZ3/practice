@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>css3</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		div {
+			border:1px solid #000;margin:100px auto;width: 800px;height: 400px;position: relative;-webkit-transform-style:perserve-3d;-webkit-perspective:800px; 
+		}
+		#ri {position: absolute;right: -100px;border-radius: 50%;width: 50px;height: 50px;top: 50%;}
+		#le {position: absolute;left: -100px;border-radius: 50%;width: 50px;height: 50px;top: 50%;}
+		img {
+			position: absolute;width: 600px;height: 300px;margin: 50px 100px;transition: 10s;-webkit-transform-origin:bottom;-webkit-transform:rotateX(-180deg);opacity: 0;
+		}
+		@keyframes show{
+			0% {
+				-webkit-transform:rotateX(180deg);
+				opacity: 0;
+			}
+			100% {
+				-webkit-transform:rotateX(0deg);
+				opacity: 1;
+			}
+		}
+		@keyframes hide{
+			0% {
+				-webkit-transform:rotateX(-180deg);
+				opacity: 1;
+			}
+			100% {
+				-webkit-transform:rotateX(-180deg);
+				opacity: 0;
+			}
+		}
+		.show{
+			-webkit-transform:rotateX(0deg);
+			-webkit-animation:3s show;
+			opacity: 1;		}
+		.hide{
+			-webkit-transform:rotateX(180deg);
+			-webkit-animation:2s hide;
+			opacity: 0;		
+		}
+	</style>
+</head>
+<body>
+	<div id="div">
+		<input type="button" value=">" id="ri">
+		<input type="button" value="<" id="le">
+		<img src="./6.jpg" class="show">
+		<img src="./5.jpg" >		
+		<img src="./4.jpg" >
+		<img src="./3.jpg" >
+		<img src="./2.jpg" >
+		<img src="./1.jpg" >	
+	</div>
+	<script type="text/javascript">
+		var ri = document.getElementById('ri');
+		var le = document.getElementById('le');
+		var im = document.getElementsByTagName('img');
+		var i = 0;
+		le.onclick = function(){
+				im[i].className = "hide";
+				i--;
+				if(i < 0){
+					i = im.length-1;
+				}
+				im[i].className = "show";
+
+			};
+
+		ri.onclick = function(){
+
+				im[i].className = "hide";
+				i++;
+				if(i >= im.length){
+					i = 0;
+				}
+				im[i].className = "show";
+
+			}
+	</script>
+</body>
+</html>
