@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>css3</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+	body {
+		background-color: #000;
+		padding: 0px;
+	}
+	#can {
+		background-color: #fff;
+		margin: 0px;
+	}
+	</style>
+</head>
+<body>
+	<canvas id="can" width="800" height="600"></canvas>
+	<script type="text/javascript">
+		var oc = document.getElementById('can');
+		var occ = oc.getContext("2d");
+		var pi = Math.PI;
+		var i = 0;
+		var im = new Image();
+		im.src = "./1.png";
+		im.onload = function(){
+			setInterval(function(){
+
+			occ.clearRect(0,0,800,600);
+			occ.beginPath();
+			occ.arc(400,300,200,-pi/2,pi);
+			occ.stroke();
+
+			occ.beginPath();
+			occ.arc(300,300,100,pi,0);
+			occ.stroke();
+
+			for (var i = 0; i < ball.length; i++) {
+				occ.beginPath();
+				occ.moveTo(ball[i].x,ball[i].y);
+				occ.arc(ball[i].x,ball[i].y,25,0,2*pi,false);
+				occ.fill();
+			}
+
+			occ.save();
+			occ.translate(400,300);
+			occ.rotate(ir);
+			occ.translate(-40,-40);
+			occ.drawImage(im,0,0);
+			occ.restore();
+
+			for (var i = 0; i < biu.length; i++) {
+				occ.save();
+				occ.fillStyle = 'red';
+				occ.beginPath();
+				occ.moveTo(biu[i].x,biu[i].y);
+				occ.arc(biu[i].x,biu[i].y,25,0,2*pi,false);
+				occ.fill();
+				occ.restore();
+			}
+
+		},1000/60);
+
+		setInterval(function(){
+				for(var i = 0;i<ball.length;i++){
+					// alert(ball[i].num);
+					ball[i].num++;
+					if(ball[i].num == 270){
+						ball[i].r = 100;
+						ball[i].startX = 300;
+						ball[i].startY = 200; 
+					}
+					if(ball[i].num == 270+180){
+						window.location.reload();
+					}
+					ball[i].x = Math.sin(ball[i].num*pi/180)*ball[i].r + ball[i].startX;
+					ball[i].y = ball[i].r-Math.cos(ball[i].num*pi/180)*ball[i].r + ball[i].startY;
+				}
+				for(var i = 0;i<biu.length;i++){
+						biu[i].x = biu[i].x + biu[i].sx;
+						biu[i].y = biu[i].y + biu[i].sy;
+					}
+				for(var i = 0;i<biu.length;i++){
+					for (var j = 0;j<ball.length;j++) {
+						if(pz(biu[i].x,biu[i].y,ball[j].x,ball[j].y)){
+							biu.splice(i,1);
+							ball.splice(j,1);
+							
+							 break;
+						}
+					}
+				}
+			},30)
+
+		var ball = []; 
+		setInterval(function(){
+			ball.push({
+			x:400,
+			y:100,
+			r:200,
+			num:0,
+			startX:400,
+			startY:100
+		})
+		},500)
+
+		var ir = 0;
+		oc.onmousemove = function(){
+			var e = e || window.event;
+			var x = e.clientX - oc.offsetLeft;
+			var y = e.clientY - oc.offsetTop;
+			var a = x - 400;
+			var b = y - 300;
+			var c = Math.sqrt(a*a+b*b);
+			if(a>0 && b>0){
+				ir = Math.asin(b/c) + 90*pi/180;
+			}else if(a>0){
+				ir = Math.asin(a/c);
+			}
+			if(a<0 && b>0){
+				ir =- (Math.asin(b/c) + 90*pi/180);
+			}else if(a<0){
+				ir = Math.asin(a/c);
+			}
+
+		}
+		var biu = [];
+		oc.onmousedown = function(){
+			var e = e || window.event;
+			var x = e.clientX - oc.offsetLeft;
+			var y = e.clientY - oc.offsetTop;
+			var a = x - 400;
+			var b = y - 300;
+			var c = Math.sqrt(a*a+b*b);
+			var speed = 5;
+			var sx = speed * a/c;
+			var sy = speed * b/c;
+			biu.push({
+				x:400,
+				y:300,
+				sx:sx,
+				sy:sy
+			})
+		}
+		function pz(x1,y1,x2,y2){
+			var a = x1-x2;
+			var b = y1- y2;
+			var c = Math.sqrt(a*a+b*b);
+			if(c<50){
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		}
+
+
+		
+
+	</script>
+</body>
+</html>
